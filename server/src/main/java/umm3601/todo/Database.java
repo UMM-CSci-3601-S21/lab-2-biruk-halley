@@ -8,6 +8,8 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
+import io.javalin.http.BadRequestResponse;
+
 
 /**
  * A fake database of todos
@@ -52,7 +54,7 @@ public class Database {
 
 
   /**
-   * Retreives all ToDo data from todo.json file
+   * Retrieves all ToDo data from todo.json file
    *
    * @param queryParams list of parameters to filter by
    * @return array of ToDo data
@@ -62,8 +64,17 @@ public class Database {
   public Todo[] listTodos(Map<String, List<String>> queryParams) {
     Todo[] filteredTodos = allTodos;
 
-    // Add filters here...
+    // Limit Todo stream
 
+    if (queryParams.containsKey("limit")) {
+      String limitParam = queryParams.get("limit").get(0);
+      try {
+        int targetAge = Integer.parseInt(limitParam);
+        filteredTodos = limitTodos(filteredTodos, targetAge);
+      } catch (NumberFormatException e) {
+        throw new BadRequestResponse("Specified limit '" + limitParam + "' can't be parsed to an integer");
+      }
+    }
     // owner filter
 
     // category filter
@@ -72,5 +83,9 @@ public class Database {
 
 
     return filteredTodos;
+  }
+
+  public Todo[] limitTodos(Todo[] todos, int targetLimit) {
+    return Arrays.stream(todos).limit(targetLimit).toArray(Todo[]::new);
   }
 }
