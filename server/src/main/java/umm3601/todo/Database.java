@@ -74,7 +74,7 @@ public class Database {
       } catch (NumberFormatException e) {
         throw new BadRequestResponse("Specified limit '" + limitParam + "' can't be parsed to an integer");
       }
-
+    }
     // owner filter
 
     // category filter
