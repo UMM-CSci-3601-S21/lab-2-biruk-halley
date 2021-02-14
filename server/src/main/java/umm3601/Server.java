@@ -49,6 +49,8 @@ public class Server {
     // List todos, filter using query parameters
     server.get("/api/todos", ctx -> todoController.getTodos(ctx));
 
+    server.get("/api/todos/:id", ctx -> todoController.getTodo(ctx));
+
   }
 
     /***
