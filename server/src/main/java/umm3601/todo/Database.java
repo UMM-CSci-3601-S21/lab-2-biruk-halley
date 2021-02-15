@@ -149,7 +149,7 @@ public class Database {
     .toArray(Todo[]::new);
   }
 
-   * Used in listTodos(). Searches for todo JSON objects with desired category.
+  /* Used in listTodos(). Searches for todo JSON objects with desired category.
    * @param todos
    * @param category
    * @return array of todos with desired category.
