@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 public class FilterTodosByStatus {
   @Test
-  public void limitTodos() throws IOException {
+  public void byStatusTodos() throws IOException {
     Database db = new Database("/todos.json");
     Todo[] allTodos = db.listTodos(new HashMap<>());
     Todo[] first5 = db.limitTodos(allTodos, 5);
