@@ -71,7 +71,6 @@ public class Database {
         throw new BadRequestResponse("Specified limit '" + limitParam + "' can't be parsed to an integer");
       }
     }
-    // owner filter
 
     if (queryParams.containsKey("owner")) {
       String statusParam = queryParams.get("owner").get(0);
@@ -80,6 +79,14 @@ public class Database {
     }
 
     // category filter
+
+    if (queryParams.containsKey("category")){
+      String categoryParam = queryParams.get("category").get(0);
+
+      filteredTodos = filterTodosByCategory(filteredTodos, categoryParam);
+    }
+
+    // owner filter
 
     // status filter
 
@@ -142,4 +149,12 @@ public class Database {
     .toArray(Todo[]::new);
   }
 
+   * Used in listTodos(). Searches for todo JSON objects with desired category.
+   * @param todos
+   * @param category
+   * @return array of todos with desired category.
+   */
+  public Todo[] filterTodosByCategory(Todo[] todos, String category){
+    return Arrays.stream(todos).filter(x -> x.category.equals(category)).toArray(Todo[]::new);
+  }
 }
