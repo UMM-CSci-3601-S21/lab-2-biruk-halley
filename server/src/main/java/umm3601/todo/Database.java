@@ -72,6 +72,12 @@ public class Database {
       }
     }
 
+    if (queryParams.containsKey("owner")) {
+      String statusParam = queryParams.get("owner").get(0);
+
+      filteredTodos = filterTodosByOwner(filteredTodos, statusParam);
+    }
+
     // category filter
 
     if (queryParams.containsKey("category")){
@@ -133,7 +139,17 @@ public class Database {
   }
 
   /**
-   * Used in listTodos(). Searches for todo JSON objects with desired category.
+  / * Used in listTodos(). Limits results to be from a single owner.
+   * @param todos:
+   * @param owner
+   * @return
+   */
+  public Todo[] filterTodosByOwner(Todo[] todos, String owner) {
+    return Arrays.stream(todos).filter(each -> each.owner.toLowerCase().equals(owner.toLowerCase()))
+    .toArray(Todo[]::new);
+  }
+
+  /* Used in listTodos(). Searches for todo JSON objects with desired category.
    * @param todos
    * @param category
    * @return array of todos with desired category.
