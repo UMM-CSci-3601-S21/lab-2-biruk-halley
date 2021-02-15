@@ -131,6 +131,12 @@ public class Database {
     return Arrays.stream(todos).filter(x -> x.body.contains(keyWord)).toArray(Todo[]::new);
   }
 
+  /**
+   * Used in listTodos(). Limits results to be from a single owner.
+   * @param todos:
+   * @param owner
+   * @return
+   */
   public Todo[] filterTodosByOwner(Todo[] todos, String owner) {
     return Arrays.stream(todos).filter(each -> each.owner.toLowerCase().equals(owner.toLowerCase()))
     .toArray(Todo[]::new);
