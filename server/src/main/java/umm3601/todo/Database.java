@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
+import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
 
 /**
@@ -79,6 +80,7 @@ public class Database {
 
     if (queryParams.containsKey("status")) {
       String statusParam = queryParams.get("status").get(0);
+
       filteredTodos = filterTodosByStatus(filteredTodos, statusParam);
     }
 
@@ -90,6 +92,7 @@ public class Database {
   }
 
   public Todo[] filterTodosByStatus(Todo[] todos, String status) {
-    return Arrays.stream(todos).filter(each -> each.status == ("Complete" == status)).toArray(Todo[]::new);
+    return Arrays.stream(todos).filter(each -> each.status == "complete".equals(status))
+    .toArray(Todo[]::new);
   }
 }

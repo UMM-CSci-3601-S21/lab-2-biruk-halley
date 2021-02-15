@@ -19,16 +19,16 @@ public class FilterTodosByStatus {
     Todo[] allTodos = db.listTodos(new HashMap<>());
     Todo[] first5 = db.limitTodos(allTodos, 5);
 
-    Todo[] complete = db.filterTodosByStatus(first5, "Complete");
+    Todo[] complete = db.filterTodosByStatus(first5, "complete");
     assertEquals(3,complete.length, "Incorrect number of completed Todos listed.");
     for (Todo todo : complete) {
-      assertTrue(todo.status);
+      assertEquals(true,todo.status);
     }
 
     Todo[] incomplete = db.filterTodosByStatus(first5, "Incomplete");
     assertEquals(2,incomplete.length, "Incorrect number of incompleted Todos listed.");
     for (Todo todo : incomplete) {
-      assertFalse(todo.status);
+      assertEquals(false,todo.status);
     }
   }
 
@@ -36,13 +36,13 @@ public class FilterTodosByStatus {
     Database db = new Database("/todos.json");
     Map<String, List<String>> queryParams = new HashMap<>();
 
-    queryParams.put("status", Arrays.asList(new String[] { "Complete" }));
+    queryParams.put("status", Arrays.asList(new String[] { "complete" }));
     Todo[] completeTodos = db.listTodos(queryParams);
     for (Todo todo: completeTodos) {
         assertTrue(todo.status);
     }
 
-    queryParams.put("status", Arrays.asList(new String[] { "Incomplete" }));
+    queryParams.put("status", Arrays.asList(new String[] { "incomplete" }));
     Todo[] incompleteTodos = db.listTodos(queryParams);
     for (Todo todo: incompleteTodos) {
         assertFalse(todo.status);
