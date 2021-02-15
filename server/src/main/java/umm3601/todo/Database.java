@@ -73,6 +73,12 @@ public class Database {
     }
     // owner filter
 
+    if (queryParams.containsKey("owner")) {
+      String statusParam = queryParams.get("owner").get(0);
+
+      filteredTodos = filterTodosByOwner(filteredTodos, statusParam);
+    }
+
     // category filter
 
     // status filter
@@ -124,4 +130,10 @@ public class Database {
   public Todo[] searchTodosByKeyWord(Todo[] todos, String keyWord){
     return Arrays.stream(todos).filter(x -> x.body.contains(keyWord)).toArray(Todo[]::new);
   }
+
+  public Todo[] filterTodosByOwner(Todo[] todos, String owner) {
+    return Arrays.stream(todos).filter(each -> each.owner.toLowerCase().equals(owner.toLowerCase()))
+    .toArray(Todo[]::new);
+  }
+
 }
