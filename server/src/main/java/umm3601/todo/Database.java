@@ -60,19 +60,7 @@ public class Database {
   public Todo[] listTodos(Map<String, List<String>> queryParams) {
     Todo[] filteredTodos = allTodos;
 
-    // Limit Todo stream
-
-    if (queryParams.containsKey("limit")) {
-      String limitParam = queryParams.get("limit").get(0);
-
-      try {
-        int targetAge = Integer.parseInt(limitParam);
-        filteredTodos = limitTodos(filteredTodos, targetAge);
-      } catch (NumberFormatException e) {
-        throw new BadRequestResponse("Specified limit '" + limitParam + "' can't be parsed to an integer");
-      }
-    }
-
+    // owner filter
     if (queryParams.containsKey("owner")) {
       String statusParam = queryParams.get("owner").get(0);
 
@@ -86,8 +74,6 @@ public class Database {
 
       filteredTodos = filterTodosByCategory(filteredTodos, categoryParam);
     }
-
-    // owner filter
 
     // status filter
 
@@ -105,10 +91,25 @@ public class Database {
       filteredTodos = searchTodosByKeyWord(filteredTodos, containsParam);
     }
 
+    // orderBy
+
     if (queryParams.containsKey("orderBy")) {
       String containsParam = queryParams.get("orderBy").get(0);
 
       filteredTodos = sortByAttribute(filteredTodos, containsParam);
+    }
+
+    // Limit
+
+    if (queryParams.containsKey("limit")) {
+      String limitParam = queryParams.get("limit").get(0);
+
+      try {
+        int targetAge = Integer.parseInt(limitParam);
+        filteredTodos = limitTodos(filteredTodos, targetAge);
+      } catch (NumberFormatException e) {
+        throw new BadRequestResponse("Specified limit '" + limitParam + "' can't be parsed to an integer");
+      }
     }
 
     return filteredTodos;
@@ -172,7 +173,6 @@ public class Database {
   public Todo[] filterTodosByCategory(Todo[] todos, String category) {
     return Arrays.stream(todos).filter(x -> x.category.equals(category)).toArray(Todo[]::new);
   }
-
 
   public Todo[] sortByAttribute(Todo[] todos, String attr) {
     Todo[] copy = todos.clone();
