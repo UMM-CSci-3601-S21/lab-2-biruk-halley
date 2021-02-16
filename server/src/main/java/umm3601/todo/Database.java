@@ -3,6 +3,7 @@ package umm3601.todo;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -80,7 +81,7 @@ public class Database {
 
     // category filter
 
-    if (queryParams.containsKey("category")){
+    if (queryParams.containsKey("category")) {
       String categoryParam = queryParams.get("category").get(0);
 
       filteredTodos = filterTodosByCategory(filteredTodos, categoryParam);
@@ -104,11 +105,18 @@ public class Database {
       filteredTodos = searchTodosByKeyWord(filteredTodos, containsParam);
     }
 
+    if (queryParams.containsKey("orderBy")) {
+      String containsParam = queryParams.get("orderBy").get(0);
+
+      filteredTodos = sortByAttribute(filteredTodos, containsParam);
+    }
+
     return filteredTodos;
   }
 
   /**
    * Used in listTodos(). Limits amount of todo JSON objects displayed.
+   *
    * @param todos
    * @param targetLimit
    * @return array of limited todos
@@ -119,42 +127,81 @@ public class Database {
 
   /**
    * Used in listTodos(). Searches for todo JSON objects with designated status.
+   *
    * @param todos
    * @param status
    * @return array of todos with designated status (Complete, Incomplete).
    */
   public Todo[] filterTodosByStatus(Todo[] todos, String status) {
-    return Arrays.stream(todos).filter(each -> each.status == "complete".equals(status))
-    .toArray(Todo[]::new);
+    return Arrays.stream(todos).filter(each -> each.status == "complete".equals(status)).toArray(Todo[]::new);
   }
 
   /**
-   * Used in listTodos(). Searches body of todo JSON object to see if it contains given key word.
+   * Used in listTodos(). Searches body of todo JSON object to see if it contains
+   * given key word.
+   *
    * @param todos
    * @param keyWord
    * @return array of todos with bodies containing given key word.
    */
-  public Todo[] searchTodosByKeyWord(Todo[] todos, String keyWord){
+  public Todo[] searchTodosByKeyWord(Todo[] todos, String keyWord) {
     return Arrays.stream(todos).filter(x -> x.body.contains(keyWord)).toArray(Todo[]::new);
   }
 
   /**
-  / * Used in listTodos(). Limits results to be from a single owner.
+   * / * Used in listTodos(). Limits results to be from a single owner.
+   *
    * @param todos:
    * @param owner
    * @return
    */
   public Todo[] filterTodosByOwner(Todo[] todos, String owner) {
     return Arrays.stream(todos).filter(each -> each.owner.toLowerCase().equals(owner.toLowerCase()))
-    .toArray(Todo[]::new);
+        .toArray(Todo[]::new);
   }
 
-  /* Used in listTodos(). Searches for todo JSON objects with desired category.
+  /*
+   * Used in listTodos(). Searches for todo JSON objects with desired category.
+   *
    * @param todos
+   *
    * @param category
+   *
    * @return array of todos with desired category.
    */
-  public Todo[] filterTodosByCategory(Todo[] todos, String category){
+  public Todo[] filterTodosByCategory(Todo[] todos, String category) {
     return Arrays.stream(todos).filter(x -> x.category.equals(category)).toArray(Todo[]::new);
+  }
+
+
+  public Todo[] sortByAttribute(Todo[] todos, String attr) {
+    Todo[] copy = todos.clone();
+    Arrays.sort(copy, new Comparator<Todo>() {
+      @Override
+      public int compare(Todo o1, Todo o2) {
+        switch (attr) {
+          case "owner": {
+            return o1.owner.compareTo(o2.owner);
+          }
+          case "body": {
+            return o1.body.compareTo(o2.body);
+          }
+          case "category": {
+            return o1.category.compareTo(o2.category);
+          }
+          case "status": {
+            if (o1.status == o2.status)
+              return 0;
+            else if (o1.status && !o2.status)
+              return 1;
+            else
+              return -1;
+          }
+          default:
+            return -1;
+        }
+      }
+    });
+    return copy;
   }
 }
